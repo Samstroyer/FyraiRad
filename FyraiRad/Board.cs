@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Timers;
 using Raylib_cs;
 
 public class Board
@@ -6,21 +7,21 @@ public class Board
     List<Stack<Piece>> board = new List<Stack<Piece>>();
     Vector2 screenDimension;
     int pieceSize = 100;
+    int maxHeight;
+
+
 
     public Board(int bottomX, int bottomY)
     {
         screenDimension = new(bottomX, bottomY);
         int boardSizeX = bottomX / 100;
+        maxHeight = bottomY / 100;
         for (int i = 0; i < boardSizeX; i++)
         {
             board.Add(new Stack<Piece>());
         }
     }
 
-    public void AddPiece(int mouseX)
-    {
-
-    }
 
     public void DisplayBoard()
     {
@@ -53,6 +54,7 @@ public class Board
         }
     }
 
+
     private void RenderBlock(int x, int y)
     {
         int xPos = x * 100;
@@ -66,5 +68,19 @@ public class Board
     public void DisplayNext(int mouseX)
     {
         double pos = Math.Floor(mouseX / 100d);
+
+        if (pos < 0 || pos >= board.Count) return;
+
+        var tempStack = board[(int)pos];
+        int height = (int)screenDimension.Y - 50;
+        height -= tempStack.Count * 100;
+        Raylib.DrawCircle((int)(pos * 100) + 50, height, 35, Color.BLUE);
+
+    }
+
+    public void AddPiece(int mouseX)
+    {
+        double pos = Math.Floor(mouseX / 100d);
+        board[(int)pos].Push(new(Color.GREEN));
     }
 }

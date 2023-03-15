@@ -16,12 +16,13 @@ public class Game
     {
         while (!Raylib.WindowShouldClose())
         {
-            MouseHandler();
-
             Raylib.BeginDrawing();
             Raylib.ClearBackground(Color.WHITE);
 
+
             b.DisplayBoard();
+
+            MouseHandler();
 
             Raylib.EndDrawing();
         }
@@ -35,7 +36,7 @@ public class Game
 
         if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
         {
-
+            b.AddPiece((int)mouseCords.X);
         }
     }
 }
