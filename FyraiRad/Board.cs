@@ -85,6 +85,7 @@ public class Board
             if (board[pos].Count < 6)
             {
                 board[pos].Add(new(c));
+                CheckWinAt(pos, board[pos].Count - 1);
                 return true;
             }
             else
@@ -101,52 +102,76 @@ public class Board
         }
     }
 
-    public void CheckWins()
+    public bool CheckWinAt(int x, int y)
     {
-        for (int x = 0; x < board.Count; x++)
+        for (int iteration = 0; iteration < 8; iteration++)
         {
-            if (board[x].Count <= 0) continue;
+            Vector2 offsetCheck = new(x, y);
+            Vector2 checkDir = new(0, 0);
 
-            for (int y = 0; y < board[x].Count; y++)
+            int rowAmount = 1;
+
+            switch (iteration)
             {
-                CheckAt(x, y);
+                case 0:
+                    checkDir = new(0, -1);
+                    break;
+                case 1:
+                    checkDir = new(1, -1);
+                    break;
+                case 2:
+                    checkDir = new(1, 0);
+                    break;
+                case 3:
+                    checkDir = new(1,   1);
+                    break;
+                case 4:
+                    checkDir = new(0, 1);
+                    break;
+                case 5:
+                    checkDir = new(-1, 1);
+                    break;
+                case 6:
+                    checkDir = new(-1, 0);
+                    break;
+                case 7:
+                    checkDir = new(-1, -1);
+                    break;
+
+                default:
+                    Console.WriteLine("This is illegal!\nStop the program!");
+                    break;
             }
-        }
 
-        void CheckAt(int x, int y)
-        {
-            bool win = false;
+            Color startColor = board[x][y].col;
 
-            for (int iteration = 0; iteration < 5; iteration++)
+            for (int i = 0; i < 3; i++)
             {
-                Vector2 offsetCheck = new(0, 0);
-                Vector2 checkDir;
+                offsetCheck += checkDir;
 
-                switch (iteration)
+                if (!(offsetCheck.X >= 0 && offsetCheck.X < board.Count)) break;
+                if (!(offsetCheck.Y >= 0 && offsetCheck.Y < board[(int)offsetCheck.X].Count)) break;
+
+                Color tileColor = board[(int)offsetCheck.X][(int)offsetCheck.Y].col;
+
+                if
+                (
+                    tileColor.r == startColor.r &&
+                    tileColor.g == startColor.g &&
+                    tileColor.b == startColor.b
+                )
                 {
-                    case 0:
-                        checkDir = new(-1, 0);
-                        break;
-                    case 1:
-                        checkDir = new(-1, 1);
-                        break;
-                    case 2:
-                        checkDir = new(0, 1);
-                        break;
-                    case 3:
-                        checkDir = new(1, 1);
-                        break;
-                    case 4:
-                        checkDir = new(1, 0);
-                        break;
+                    rowAmount++;
                 }
 
-                // It is not necessary to check bakwards, we check up, front up, front, down front and down
-                for (int i = 0; i < 4; i++)
+                if (rowAmount == 4)
                 {
-
+                    Console.WriteLine("A winning move!");
+                    return true;
                 }
             }
         }
+        Console.WriteLine("Not a winning move!");
+        return false;
     }
 }
