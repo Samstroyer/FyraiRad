@@ -123,7 +123,7 @@ public class Board
                     checkDir = new(1, 0);
                     break;
                 case 3:
-                    checkDir = new(1,   1);
+                    checkDir = new(1, 1);
                     break;
                 case 4:
                     checkDir = new(0, 1);
@@ -139,7 +139,7 @@ public class Board
                     break;
 
                 default:
-                    Console.WriteLine("This is illegal!\nStop the program!");
+                    Console.WriteLine("This is illegal!\nShould be unreachable code!");
                     break;
             }
 
