@@ -25,7 +25,9 @@ public class Game
 
     public void Run()
     {
-        while (!Raylib.WindowShouldClose())
+        bool win = false;
+
+        while (!Raylib.WindowShouldClose() && !win)
         {
             Raylib.BeginDrawing();
             Raylib.ClearBackground(Color.WHITE);
@@ -33,13 +35,13 @@ public class Game
 
             b.DisplayBoard();
 
-            MouseHandler();
+            win = MouseHandler();
 
             Raylib.EndDrawing();
         }
     }
 
-    public void MouseHandler()
+    public bool MouseHandler()
     {
         var mouseCords = Raylib.GetMousePosition();
 
@@ -47,8 +49,11 @@ public class Game
 
         if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
         {
-            bool succesful = b.AddPiece((int)mouseCords.X, PlayerColor);
-            if (succesful) turnToggle = !turnToggle;
+            var succesful = b.AddPiece((int)mouseCords.X, PlayerColor);
+            if (succesful.succesful) turnToggle = !turnToggle;
+            if (succesful.win) return true; else return false;
         }
+
+        return false;
     }
 }

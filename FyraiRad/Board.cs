@@ -76,7 +76,7 @@ public class Board
 
     }
 
-    public bool AddPiece(int mouseX, Color c)
+    public (bool succesful, bool win) AddPiece(int mouseX, Color c)
     {
         int pos = (int)Math.Floor(mouseX / 100d);
 
@@ -85,20 +85,20 @@ public class Board
             if (board[pos].Count < 6)
             {
                 board[pos].Add(new(c));
-                CheckWinAt(pos, board[pos].Count - 1);
-                return true;
+                bool win = CheckWinAt(pos, board[pos].Count - 1);
+                return (true, win);
             }
             else
             {
                 Console.WriteLine("Filled column!");
-                return false;
+                return (false, false);
             }
         }
         else
         {
             Console.WriteLine("Index out of range! -- i : " + pos);
             Console.WriteLine("Range from 0 to " + (board.Count - 1));
-            return false;
+            return (false, false);
         }
     }
 
@@ -144,6 +144,16 @@ public class Board
             }
 
             Color startColor = board[x][y].col;
+            string potentialWinner = "";
+
+            // Printing color ToString and just color results in "{R:253 G:249 B:0 A:255}" - not readable for a player really
+            if
+            (
+                Color.RED.r == startColor.r &&
+                Color.RED.g == startColor.g &&
+                Color.RED.b == startColor.b
+            ) potentialWinner = "Red";
+            else potentialWinner = "Yellow";
 
             for (int i = 0; i < 3; i++)
             {
@@ -167,6 +177,7 @@ public class Board
                 if (rowAmount == 4)
                 {
                     Console.WriteLine("A winning move!");
+                    Win(potentialWinner, tileColor);
                     return true;
                 }
             }
@@ -174,4 +185,33 @@ public class Board
         Console.WriteLine("Not a winning move!");
         return false;
     }
+
+    private void Win(string winnerColor, Color c)
+    {
+        Raylib.EndDrawing();
+
+        KeyboardKey key = KeyboardKey.KEY_NULL;
+        int fontSize = 32;
+
+        string winnerText = "Color " + winnerColor + " wins!";
+        string exitText = "Press any key to exit";
+
+        int winnerTextSize = Raylib.MeasureText(winnerText, fontSize);
+        int exitTextSize = Raylib.MeasureText(exitText, fontSize);
+
+        while (key == KeyboardKey.KEY_NULL && !Raylib.WindowShouldClose())
+        {
+            key = (KeyboardKey)Raylib.GetKeyPressed();
+
+            Raylib.BeginDrawing();
+
+            Raylib.ClearBackground(Color.GRAY);
+
+            Raylib.DrawText(winnerText, winnerTextSize / 2, 250, fontSize, c);
+            Raylib.DrawText(exitText, exitTextSize / 2, 350, fontSize, Color.BLACK);
+
+            Raylib.EndDrawing();
+        };
+    }
 }
+
